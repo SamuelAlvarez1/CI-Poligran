@@ -1,0 +1,202 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+header {
+  background: #111827;
+  color: #ffffff;
+}
+
+.header-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 20px 16px;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.7rem;
+}
+
+header p {
+  margin: 6px 0 0;
+  color: #d1d5db;
+}
+
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.cards {
+  display: grid;
+  gap: 12px;
+}
+
+.card,
+.panel {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.card {
+  border-top: 4px solid #1d4ed8;
+}
+
+.card h2,
+.panel h2 {
+  margin: 0 0 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.card p {
+  margin: 0;
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.card-income {
+  border-top-color: #0f766e;
+}
+
+.card-expense {
+  border-top-color: #b91c1c;
+}
+
+.card-balance {
+  border-top-color: #1d4ed8;
+}
+
+.card-negative {
+  border-top-color: #b45309;
+}
+
+form {
+  display: grid;
+  gap: 12px;
+}
+
+.form-row {
+  display: grid;
+  gap: 12px;
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+input,
+select,
+button {
+  font: inherit;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+button {
+  width: fit-content;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #111827;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+button.danger {
+  background: #ffffff;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+
+.form-error,
+.banner {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.status,
+.empty {
+  color: #4b5563;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+}
+
+th,
+td {
+  padding: 10px 8px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.amount {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.amount.income {
+  color: #0f766e;
+}
+
+.amount.expense {
+  color: #b91c1c;
+}
+
+.empty {
+  text-align: center;
+}
+
+@media (min-width: 800px) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .form-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}

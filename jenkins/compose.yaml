@@ -1,0 +1,29 @@
+# Jenkins de la demostración de CI. Se ejecuta separado de FinTrack.
+# Arranque:   docker compose -f jenkins/compose.yaml up -d --build
+# Detención:  docker compose -f jenkins/compose.yaml stop     (conserva la configuración)
+#
+# Seguridad: el socket de Docker del anfitrión da privilegios elevados sobre el motor Docker.
+# Su uso se limita al entorno académico local. Jenkins solo escucha en 127.0.0.1.
+
+name: fintrack-jenkins
+
+services:
+  jenkins:
+    build:
+      context: .
+    image: fintrack-jenkins:lts
+    container_name: fintrack-jenkins
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - jenkins-home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+    # Grupo del socket de Docker. En Docker Desktop el socket suele ser accesible con GID 0.
+    # Si "docker ps" falla dentro de Jenkins, ajustar con: DOCKER_GID=<gid> docker compose ...
+    group_add:
+      - "${DOCKER_GID:-0}"
+    restart: unless-stopped
+
+volumes:
+  jenkins-home:
+    name: fintrack-jenkins-home

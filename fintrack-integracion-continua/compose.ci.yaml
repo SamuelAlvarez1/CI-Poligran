@@ -1,0 +1,74 @@
+# Entorno aislado para la integración continua de FinTrack.
+#
+# Se ejecuta con un nombre de proyecto único por build, por ejemplo:
+#   docker compose -p fintrack-ci-7 -f compose.ci.yaml up -d --wait
+#
+# Diferencias con compose.yaml (la aplicación original):
+#   - Sin container_name: Compose asigna nombres con el prefijo del proyecto.
+#   - Sin puertos publicados al anfitrión: no hay conflictos con 3000 ni 5173.
+#   - Volumen propio (ci-db) y red propia del proyecto: no toca fintrack-db ni la red fintrack.
+#   - Base de datos exclusiva fintrack_ci, con datos ficticios.
+#   - Sin restart: el entorno es temporal y lo elimina el pipeline.
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: fintrack
+      POSTGRES_PASSWORD: fintrack
+      POSTGRES_DB: fintrack_ci
+    volumes:
+      - ci-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fintrack -d fintrack_ci"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      DATABASE_URL: postgresql://fintrack:fintrack@db:5432/fintrack_ci?schema=public
+      PORT: "3000"
+      CORS_ORIGIN: http://localhost:5173
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:3000
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:5173/').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  ci-db:
